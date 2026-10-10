@@ -1,0 +1,31 @@
+# LiteLLM model gateway. One OpenAI-compatible API for Azure OpenAI and tenant-hosted
+# open-weight models (vLLM on AKS GPU).
+#
+# Agent Authority decides which models a call may use (catalog approval, the agent's
+# card, data classes, budgets) through POST /api/authority/route; LiteLLM executes the
+# call, retries and fails over within the returned fallbacks only.
+# Callback setup follows Agent Authority's docs/integrations/litellm.md. The callback
+# uses the control plane's ingest key and fails closed.
+
+model_list:
+  - model_name: azure-gpt
+    litellm_params:
+      model: azure/${AZURE_OPENAI_DEPLOYMENT}
+      api_base: os.environ/AZURE_OPENAI_ENDPOINT
+      api_key: os.environ/AZURE_OPENAI_KEY
+    model_info: { hosting: external }
+  - model_name: tenant-open-weight
+    litellm_params:
+      model: openai/${VLLM_MODEL}
+      api_base: os.environ/VLLM_ENDPOINT
+      api_key: os.environ/VLLM_KEY
+    model_info: { hosting: tenant }
+
+litellm_settings:
+  # AuthorityLiteLLM: /route before each call, usage and cost after it.
+  # Set the module path from that guide when the plugin is pinned; this is a placeholder.
+  callbacks: ["AUTHORITY_LITELLM_CALLBACK"]
+  drop_params: true
+
+general_settings:
+  master_key: os.environ/LITELLM_MASTER_KEY
