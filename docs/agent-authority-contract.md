@@ -15,5 +15,6 @@ contracts themselves are owned in Agent Authority's *Joint architecture* section
 | Human approval | `agent-authority-session:` marker in the PR body | `app/export.py` | Built |
 | Promotion check | pipeline step; untested-in-prod blocks, regression warns | `scripts/promotion_check.py` | Waits on Agent Authority gap 11 |
 | Branding | read `/branding`, apply under `:root`, defaults on failure | `shell/src/branding.ts` | Built |
+| Estate manifest | app reads, writes, exposes, depends on, access; in the card and in OpenLineage I/O | `app/estate.py`, `app/export.py` | Built; proposed to Agent Authority for an estate view |
 | Embed | pinned `<agent-authority>` npm package | `shell/` | Waits on npm publish |
 | Identity | Entra token validation; role mapping | `app/main.py` (`current_user`) | Next: dev-only stub refuses outside dev |

@@ -35,3 +35,11 @@ shell (React) ──> control plane (FastAPI) ──> LangGraph harness
 - An unrecognised policy answer is treated as unreachable, not as permission.
 - Branding unavailable: the shell uses defaults.
 - Three failed attempts: the session ends as `failed` with the eval reasons.
+
+## The connected-apps estate
+
+Every app the builder exports carries an `AppManifest` (`app/estate.py`). The manifest lists what the app reads, what it writes, what interfaces it exposes, which other apps it calls, and which Entra groups can use it. Together the manifests make one estate-wide picture: data flow between apps, dependencies, and access control.
+
+- **Store of record: Agent Authority, not a second database.** The manifest goes into the app's registered card (`params.app`) and into the deploy run's OpenLineage inputs and outputs. The estate is the same graph as the data pipelines, with apps as nodes alongside tables and jobs.
+- **Observed, not just declared.** Data inputs come from the connectors the session actually read (`RunContext.record_read`). A builder declares access and interfaces but can't leave out a source the agent used.
+- **Checked at export.** An app needs at least one Entra group. An app touching client data or PII can't be open to everyone. Outputs keep the data classes of their inputs. A manifest that fails stops the export.
